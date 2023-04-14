@@ -167,8 +167,14 @@ const createTemplate = () => (
 
 
 export default class CreatePointView {
+  constructor(point, destinations, offers) {
+    this.point = point;
+    this.destinations = destinations;
+    this.offers = offers;
+  }
+
   getTemplate() {
-    return createTemplate;
+    return createTemplate(this.point, this.destinations, this.offers);
   }
 
   getElement() {
