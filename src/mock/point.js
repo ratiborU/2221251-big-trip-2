@@ -16,7 +16,7 @@ const DESCRIPTIONS = [
   'In rutrum ac purus sit amet tempus.'
 ];
 
-const POINTS_COUNT = 10;
+const POINTS_COUNT = 4;
 
 const DESTINATION_NAMES = ['Amsterdam', 'Chamonix', 'Geneva', 'London'];
 
