@@ -2,6 +2,7 @@ import PointView from '../view/point-view.js';
 import TripEventsView from '../view/trip-events-view.js';
 import SortView from '../view/sort-view.js';
 import EditPointView from '../view/edit-point-view.js';
+import NoPointsView from '../view/no-points-view.js';
 // import CreatePointView from '../view/create-point-view.js';
 import { render } from '../render.js';
 
@@ -64,11 +65,14 @@ export default class MainPresenter {
     this.#destinations = [...this.#pointsModel.getDestinations()];
     this.#offers = [...this.#pointsModel.getOffers()];
 
-    render(new SortView(), this.#tripContainer);
-    render(this.#pointsList, this.#tripContainer);
-
-    for (const point of this.#points) {
-      this.#renderPoint(point);
+    if (this.#points.length === 0) {
+      render(new NoPointsView(), this.#tripContainer);
+    } else {
+      render(new SortView(), this.#tripContainer);
+      render(this.#pointsList, this.#tripContainer);
+      for (const point of this.#points) {
+        this.#renderPoint(point);
+      }
     }
   }
 }
