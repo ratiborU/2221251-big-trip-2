@@ -1,4 +1,4 @@
-export default class PointModel {
+export default class PointsModel {
   #points = [];
   #destinations = [];
   #offers = [];
@@ -9,15 +9,15 @@ export default class PointModel {
     this.#offers = offers;
   }
 
-  getPoints() {
+  get points() {
     return this.#points;
   }
 
-  getDestinations() {
+  get destinations() {
     return this.#destinations;
   }
 
-  getOffers() {
+  get offers() {
     return this.#offers;
   }
 }
