@@ -1,7 +1,7 @@
+import { render } from './framework/render.js';
 import FiltersView from './view/filters-view.js';
 import MainPresenter from './presenter/main-presenter.js';
 import MenuView from './view/menu-view.js';
-import { render } from './render.js';
 import PointModel from './model/point-model.js';
 import { getPoints, getDestinations, getOffersByType } from './mock/point.js';
 
@@ -11,7 +11,6 @@ const siteMainElement = document.querySelector('.page-main');
 const tripPresenter = new MainPresenter(siteMainElement.querySelector('.trip-events'));
 
 const points = getPoints();
-//console.log(points);
 const destinations = getDestinations();
 const offersByType = getOffersByType();
 const pointsModel = new PointModel();
