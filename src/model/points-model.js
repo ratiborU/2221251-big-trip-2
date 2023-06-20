@@ -1,14 +1,17 @@
 import Observable from '../framework/observable.js';
 import { UpdateType } from '../const.js';
 
+
 export default class PointsModel extends Observable{
   #points = [];
   #pointsApiService = null;
+
 
   constructor(pointsApiService) {
     super();
     this.#pointsApiService = pointsApiService;
   }
+
 
   init = async () => {
     try {
@@ -21,9 +24,11 @@ export default class PointsModel extends Observable{
     this._notify(UpdateType.INIT);
   };
 
+
   get points() {
     return this.#points;
   }
+
 
   updatePoint = async (updateType, update) => {
     const index = this.#points.findIndex((point) => point.id === update.id);
@@ -31,7 +36,6 @@ export default class PointsModel extends Observable{
     if (index === -1) {
       throw new Error('Can\'t update unexisting point');
     }
-
     try {
       const response = await this.#pointsApiService.updatePoint(update);
       const updatedPoint = this.#adaptToClient(response);
@@ -46,26 +50,37 @@ export default class PointsModel extends Observable{
     }
   };
 
-  addPoint = (updateType, update) => {
-    this.#points.unshift(update);
 
-    this._notify(updateType, update);
+  addPoint = async (updateType, update) => {
+    try {
+      const response = await this.#pointsApiService.addPoint(update);
+      const newPoint = this.#adaptToClient(response);
+      this.#points.unshift(newPoint);
+      this._notify(updateType, newPoint);
+    } catch(err) {
+      throw new Error('Can\'t add point');
+    }
   };
 
-  deletePoint = (updateType, update) => {
+
+  deletePoint = async (updateType, update) => {
     const index = this.#points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t delete unexisting point');
     }
-
-    this.#points = [
-      ...this.#points.slice(0, index),
-      ...this.#points.slice(index + 1),
-    ];
-
-    this._notify(updateType);
+    try {
+      await this.#pointsApiService.deletePoint(update);
+      this.#points = [
+        ...this.#points.slice(0, index),
+        ...this.#points.slice(index + 1),
+      ];
+      this._notify(updateType);
+    } catch(err) {
+      throw new Error('Can\'t delete point');
+    }
   };
+
 
   #adaptToClient = (point) => {
     const adaptedPoint = {...point,
@@ -75,7 +90,6 @@ export default class PointsModel extends Observable{
       isFavorite: point['is_favorite'],
     };
 
-    // Ненужные ключи мы удаляем
     delete adaptedPoint['base_price'];
     delete adaptedPoint['date_from'];
     delete adaptedPoint['date_to'];
@@ -84,3 +98,4 @@ export default class PointsModel extends Observable{
     return adaptedPoint;
   };
 }
+

@@ -3,36 +3,35 @@ import PreviewPointView from '../view/preview-point-view.js';
 import PointView from '../view/point-view.js';
 import { UserAction, UpdateType } from '../const.js';
 
+
 const Mode = {
   PREVIEW: 'preview',
   EDITING: 'editing',
 };
 
+
 export default class PointPresenter {
   #pointListContainer = null;
   #previewPointComponent = null;
   #editingPointComponent = null;
-  #pointsModel = null;
   #destinationsModel = null;
   #offersModel = null;
-
   #destinations = null;
   #offers = null;
-
   #changeData = null;
   #changeMode = null;
-
   #point = null;
   #mode = Mode.PREVIEW;
 
-  constructor({pointListContainer, pointsModel, changeData, changeMode, destinationsModel, offersModel}) {
+
+  constructor({pointListContainer, changeData, changeMode, destinationsModel, offersModel}) {
     this.#pointListContainer = pointListContainer;
-    this.#pointsModel = pointsModel;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
   }
+
 
   init(point) {
     this.#point = point;
@@ -66,7 +65,8 @@ export default class PointPresenter {
         replace(this.#previewPointComponent, prevPreviewPointComponent);
         break;
       case Mode.EDITING:
-        replace(this.#editingPointComponent, prevEditingPointComponent);
+        replace(this.#previewPointComponent, prevEditingPointComponent);
+        this.#mode = Mode.PREVIEW;
         break;
     }
 
@@ -74,10 +74,12 @@ export default class PointPresenter {
     remove(prevEditingPointComponent);
   }
 
+
   destroy = () => {
     remove(this.#previewPointComponent);
     remove(this.#editingPointComponent);
   };
+
 
   resetView = () => {
     if (this.#mode !== Mode.PREVIEW) {
@@ -86,6 +88,46 @@ export default class PointPresenter {
     }
   };
 
+
+  setSaving = () => {
+    if (this.#mode === Mode.EDITING) {
+      this.#editingPointComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  };
+
+
+  setDeleting = () => {
+    if (this.#mode === Mode.EDITING) {
+      this.#editingPointComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
+  };
+
+
+  setAborting = () => {
+    if (this.#mode === Mode.PREVIEW) {
+      this.#previewPointComponent.shake();
+      return;
+    }
+
+    this.#editingPointComponent.shake(this.#resetFormState);
+  };
+
+
+  #resetFormState = () => {
+    this.#editingPointComponent.updateElement({
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    });
+  };
+
+
   #replacePreviewPointToEditingPoint = () => {
     replace(this.#editingPointComponent, this.#previewPointComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
@@ -93,11 +135,13 @@ export default class PointPresenter {
     this.#mode = Mode.EDITING;
   };
 
+
   #replaceEditingPointToPreviewPoint = () => {
     replace(this.#previewPointComponent, this.#editingPointComponent);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
     this.#mode = Mode.PREVIEW;
   };
+
 
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
@@ -105,6 +149,7 @@ export default class PointPresenter {
       this.resetView();
     }
   };
+
 
   #handleFavoriteClick = () => {
     this.#changeData(
@@ -114,13 +159,16 @@ export default class PointPresenter {
     );
   };
 
+
   #handleEditClick = () => {
     this.#replacePreviewPointToEditingPoint();
   };
 
+
   #handlePreviewClick = () => {
     this.resetView();
   };
+
 
   #handleFormSubmit = (point) => {
     this.#changeData(
@@ -128,8 +176,8 @@ export default class PointPresenter {
       UpdateType.MINOR,
       point,
     );
-    this.#replaceEditingPointToPreviewPoint();
   };
+
 
   #handleResetClick = (point) => {
     this.#changeData(
@@ -139,3 +187,4 @@ export default class PointPresenter {
     );
   };
 }
+

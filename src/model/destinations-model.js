@@ -1,13 +1,16 @@
 import Observable from '../framework/observable.js';
 
+
 export default class DestinationsModel extends Observable {
   #destinations = [];
   #destinationsApiService = null;
+
 
   constructor(destinationsApiService) {
     super();
     this.#destinationsApiService = destinationsApiService;
   }
+
 
   init = async () => {
     try {
@@ -16,6 +19,7 @@ export default class DestinationsModel extends Observable {
       this.#destinations = [];
     }
   };
+
 
   get destinations() {
     return this.#destinations;
