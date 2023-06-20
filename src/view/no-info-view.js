@@ -3,13 +3,14 @@ import AbstractView from '../framework/view/abstract-view.js';
 
 const createTemplate = () => (
   `<p class="trip-events__msg">
-    Loading...
+    Sorry, there was an error loading the data
   </p>`
 );
 
 
-export default class LoadingView extends AbstractView {
+export default class NoInfoView extends AbstractView {
   get template() {
     return createTemplate();
   }
 }
+
